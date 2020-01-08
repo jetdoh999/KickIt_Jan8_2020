@@ -1,0 +1,38 @@
+import 'package:flutter_ui_designs/notifier/food_notifier.dart';
+import 'package:flutter_ui_designs/screens/feed.dart';
+import 'package:flutter_ui_designs/screens/login.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'notifier/auth_notifier.dart';
+
+void main() => runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          builder: (context) => AuthNotifier(),
+        ),
+        ChangeNotifierProvider(
+          builder: (context) => FoodNotifier(),
+        ),
+      ],
+      child: MyApp(),
+    ));
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Coding with Curry',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        accentColor: Colors.lightBlue,
+      ),
+      home: Consumer<AuthNotifier>(
+        builder: (context, notifier, child) {
+          return notifier.user != null ? Feed() : Login();
+        },
+      ),
+    );
+  }
+}
