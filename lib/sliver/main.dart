@@ -1,7 +1,7 @@
-import 'package:CWCFlutter/notifier/food_notifier.dart';
-import 'package:CWCFlutter/screens/feed.dart';
-import 'package:CWCFlutter/screens/login.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ui_designs/notifier/food_notifier.dart';
+import 'package:flutter_ui_designs/screens/feed.dart';
+import 'package:flutter_ui_designs/screens/login.dart';
 import 'package:provider/provider.dart';
 
 import 'notifier/auth_notifier.dart';

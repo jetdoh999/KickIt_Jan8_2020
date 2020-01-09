@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:CWCFlutter/model/food.dart';
-import 'package:CWCFlutter/model/user.dart';
-import 'package:CWCFlutter/notifier/auth_notifier.dart';
-import 'package:CWCFlutter/notifier/food_notifier.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_ui_designs/model/food.dart';
+import 'package:flutter_ui_designs/model/user.dart';
+import 'package:flutter_ui_designs/notifier/auth_notifier.dart';
+import 'package:flutter_ui_designs/notifier/food_notifier.dart';
 import 'package:path/path.dart' as path;
 import 'package:uuid/uuid.dart';
 
@@ -27,7 +27,8 @@ login(User user, AuthNotifier authNotifier) async {
 
 signup(User user, AuthNotifier authNotifier) async {
   AuthResult authResult = await FirebaseAuth.instance
-      .createUserWithEmailAndPassword(email: user.email, password: user.password)
+      .createUserWithEmailAndPassword(
+          email: user.email, password: user.password)
       .catchError((error) => print(error.code));
 
   if (authResult != null) {
@@ -50,7 +51,9 @@ signup(User user, AuthNotifier authNotifier) async {
 }
 
 signout(AuthNotifier authNotifier) async {
-  await FirebaseAuth.instance.signOut().catchError((error) => print(error.code));
+  await FirebaseAuth.instance
+      .signOut()
+      .catchError((error) => print(error.code));
 
   authNotifier.setUser(null);
 }
@@ -80,7 +83,8 @@ getFoods(FoodNotifier foodNotifier) async {
   foodNotifier.foodList = _foodList;
 }
 
-uploadFoodAndImage(Food food, bool isUpdating, File localFile, Function foodUploaded) async {
+uploadFoodAndImage(
+    Food food, bool isUpdating, File localFile, Function foodUploaded) async {
   if (localFile != null) {
     print("uploading image");
 
@@ -89,10 +93,14 @@ uploadFoodAndImage(Food food, bool isUpdating, File localFile, Function foodUplo
 
     var uuid = Uuid().v4();
 
-    final StorageReference firebaseStorageRef =
-        FirebaseStorage.instance.ref().child('foods/images/$uuid$fileExtension');
+    final StorageReference firebaseStorageRef = FirebaseStorage.instance
+        .ref()
+        .child('foods/images/$uuid$fileExtension');
 
-    await firebaseStorageRef.putFile(localFile).onComplete.catchError((onError) {
+    await firebaseStorageRef
+        .putFile(localFile)
+        .onComplete
+        .catchError((onError) {
       print(onError);
       return false;
     });
@@ -106,7 +114,8 @@ uploadFoodAndImage(Food food, bool isUpdating, File localFile, Function foodUplo
   }
 }
 
-_uploadFood(Food food, bool isUpdating, Function foodUploaded, {String imageUrl}) async {
+_uploadFood(Food food, bool isUpdating, Function foodUploaded,
+    {String imageUrl}) async {
   CollectionReference foodRef = Firestore.instance.collection('Foods');
 
   if (imageUrl != null) {

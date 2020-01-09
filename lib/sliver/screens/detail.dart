@@ -1,5 +1,5 @@
-import 'package:CWCFlutter/notifier/food_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ui_designs/notifier/food_notifier.dart';
 import 'package:provider/provider.dart';
 
 import 'food_form.dart';

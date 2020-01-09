@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:CWCFlutter/api/food_api.dart';
-import 'package:CWCFlutter/model/food.dart';
-import 'package:CWCFlutter/notifier/food_notifier.dart';
+import 'package:flutter_ui_designs/api/food_api.dart';
+import 'package:flutter_ui_designs/notifier/food_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ui_designs/model/food.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -24,12 +24,13 @@ class _FoodFormState extends State<FoodForm> {
   Food _currentFood;
   String _imageUrl;
   File _imageFile;
-  TextEditingController subingredientController = new TextEditingController();
+  TextEditingController subingredientController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    FoodNotifier foodNotifier = Provider.of<FoodNotifier>(context, listen: false);
+    FoodNotifier foodNotifier =
+        Provider.of<FoodNotifier>(context, listen: false);
 
     if (foodNotifier.currentFood != null) {
       _currentFood = foodNotifier.currentFood;
@@ -60,7 +61,10 @@ class _FoodFormState extends State<FoodForm> {
             color: Colors.black54,
             child: Text(
               'Change Image',
-              style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w400),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400),
             ),
             onPressed: () => _getLocalImage(),
           )
@@ -82,7 +86,10 @@ class _FoodFormState extends State<FoodForm> {
             color: Colors.black54,
             child: Text(
               'Change Image',
-              style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w400),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400),
             ),
             onPressed: () => _getLocalImage(),
           )
@@ -92,8 +99,8 @@ class _FoodFormState extends State<FoodForm> {
   }
 
   _getLocalImage() async {
-    File imageFile =
-        await ImagePicker.pickImage(source: ImageSource.gallery, imageQuality: 50, maxWidth: 400);
+    File imageFile = await ImagePicker.pickImage(
+        source: ImageSource.gallery, imageQuality: 50, maxWidth: 400);
 
     if (imageFile != null) {
       setState(() {
@@ -187,7 +194,8 @@ class _FoodFormState extends State<FoodForm> {
 
     _currentFood.subIngredients = _subingredients;
 
-    uploadFoodAndImage(_currentFood, widget.isUpdating, _imageFile, _onFoodUploded);
+    uploadFoodAndImage(
+        _currentFood, widget.isUpdating, _imageFile, _onFoodUploded);
 
     print("name: ${_currentFood.name}");
     print("category: ${_currentFood.category}");
@@ -235,7 +243,8 @@ class _FoodFormState extends State<FoodForm> {
                 ButtonTheme(
                   child: RaisedButton(
                     child: Text('Add', style: TextStyle(color: Colors.white)),
-                    onPressed: () => _addSubingredient(subingredientController.text),
+                    onPressed: () =>
+                        _addSubingredient(subingredientController.text),
                   ),
                 )
               ],
@@ -267,7 +276,7 @@ class _FoodFormState extends State<FoodForm> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          FocusScope.of(context).requestFocus(new FocusNode());
+          FocusScope.of(context).requestFocus(FocusNode());
           _saveFood();
         },
         child: Icon(Icons.save),
