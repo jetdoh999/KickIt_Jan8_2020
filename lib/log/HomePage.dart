@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_ui_designs/feedx.dart';
 
-
 import 'package:flutter_ui_designs/one.dart';
 import 'package:flutter_ui_designs/seven.dart';
 import 'package:flutter_ui_designs/three.dart';
@@ -26,20 +25,20 @@ class _HomePageState extends State<HomePage> {
   bool isSignedIn = false;
   String imageUrl;
 
-  checkAuthentication() async{
-    _auth.onAuthStateChanged.listen((user){
-      if(user == null){
+  checkAuthentication() async {
+    _auth.onAuthStateChanged.listen((user) {
+      if (user == null) {
         Navigator.pushReplacementNamed(context, '/signin');
       }
     });
   }
 
-  getUser() async{
+  getUser() async {
     FirebaseUser firebaseUser = await _auth.currentUser();
     await firebaseUser?.reload();
     firebaseUser = await _auth.currentUser();
 
-    if(firebaseUser != null){
+    if (firebaseUser != null) {
       setState(() {
         this.user = firebaseUser;
         this.isSignedIn = true;
@@ -49,12 +48,13 @@ class _HomePageState extends State<HomePage> {
     print("${user.displayName} is the user ${user.photoUrl}");
   }
 
-  signout() async{
+  signout() async {
     _auth.signOut();
   }
 
   @override
   void initState() {
+    print("HomePage");
     super.initState();
     this.checkAuthentication();
     this.getUser();
@@ -67,20 +67,14 @@ class _HomePageState extends State<HomePage> {
     ThreeTab(),
     Feedx(),
     HomeScreen(),
-    
   ];
   int _currentIndex = 0;
 
-
   @override
   Widget build(BuildContext context) {
-   
-    
-
     print("building Feed");
     return Scaffold(
       body: MorpheusTabView(child: _screens[_currentIndex]),
-
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white.withOpacity(0.8),
         currentIndex: _currentIndex,
@@ -90,12 +84,11 @@ class _HomePageState extends State<HomePage> {
         selectedFontSize: 10,
         unselectedFontSize: 7,
         iconSize: 30,
-
         items: [
           BottomNavigationBarItem(
             icon: Icon(
-            LineAwesomeIcons.user,
-          ),
+              LineAwesomeIcons.user,
+            ),
             title: Text('Profile'),
           ),
           BottomNavigationBarItem(
@@ -110,7 +103,6 @@ class _HomePageState extends State<HomePage> {
             ),
             title: Text('All Player'),
           ),
-          
           BottomNavigationBarItem(
             icon: Icon(
               LineAwesomeIcons.globe,
