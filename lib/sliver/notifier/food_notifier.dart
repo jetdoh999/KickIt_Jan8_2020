@@ -1,7 +1,6 @@
 import 'dart:collection';
-
-import 'package:CWCFlutter/model/food.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_ui_designs/model/food.dart';
 
 class FoodNotifier with ChangeNotifier {
   List<Food> _foodList = [];

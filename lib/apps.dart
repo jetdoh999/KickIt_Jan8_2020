@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,10 +7,6 @@ import 'two.dart';
 import 'three.dart';
 import 'fourrr.dart';
 import 'five.dart';
-import 'six.dart';
-
-
-
 
 class KickItApps extends StatelessWidget {
   @override
@@ -22,45 +17,36 @@ class KickItApps extends StatelessWidget {
   }
 }
 
-
 class KickItHomePages extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
         items: [
-           BottomNavigationBarItem(
+          BottomNavigationBarItem(
             icon: Icon(Icons.person_pin, size: 26),
             title: const Text("Player"),
           ),
-
-
           BottomNavigationBarItem(
             icon: Icon(Icons.supervised_user_circle, size: 26),
             title: Text('Team'),
           ),
-
-
           BottomNavigationBarItem(
             icon: Icon(Icons.public, size: 26),
             title: Text('All Team'),
           ),
-
           BottomNavigationBarItem(
             icon: Icon(Icons.assessment, size: 26),
             title: Text('Stats'),
           ),
-
           BottomNavigationBarItem(
             icon: Icon(Icons.map, size: 26),
             title: Text('Stadium'),
           ),
-
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart, size: 26),
             title: Text('Market'),
           ),
-
         ],
       ),
       tabBuilder: (context, index) {
@@ -108,7 +94,6 @@ class KickItHomePages extends StatelessWidget {
               );
             });
             break;
-
         }
         return returnValue;
       },

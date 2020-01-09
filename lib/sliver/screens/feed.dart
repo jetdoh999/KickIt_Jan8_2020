@@ -1,9 +1,9 @@
-import 'package:CWCFlutter/api/food_api.dart';
-import 'package:CWCFlutter/notifier/auth_notifier.dart';
-import 'package:CWCFlutter/notifier/food_notifier.dart';
-import 'package:CWCFlutter/screens/detail.dart';
-import 'package:CWCFlutter/screens/food_form.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ui_designs/api/food_api.dart';
+import 'package:flutter_ui_designs/notifier/auth_notifier.dart';
+import 'package:flutter_ui_designs/notifier/food_notifier.dart';
+import 'package:flutter_ui_designs/screens/details.dart';
+import 'package:flutter_ui_designs/screens/food_form.dart';
 import 'package:provider/provider.dart';
 
 class Feed extends StatefulWidget {
@@ -45,7 +45,7 @@ class _FeedState extends State<Feed> {
           ),
         ],
       ),
-      body: new RefreshIndicator(
+      body: RefreshIndicator(
         child: ListView.separated(
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
