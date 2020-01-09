@@ -1,7 +1,7 @@
-import 'package:CWCFlutter/api/food_api.dart';
-import 'package:CWCFlutter/model/user.dart';
-import 'package:CWCFlutter/notifier/auth_notifier.dart';
+import 'package:flutter_ui_designs/api/food_api.dart';
+import 'package:flutter_ui_designs/notifier/auth_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ui_designs/model/user.dart';
 import 'package:provider/provider.dart';
 
 enum AuthMode { Signup, Login }
@@ -22,7 +22,8 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
-    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
+    AuthNotifier authNotifier =
+        Provider.of<AuthNotifier>(context, listen: false);
     initializeCurrentUser(authNotifier);
     super.initState();
   }
@@ -34,7 +35,8 @@ class _LoginState extends State<Login> {
 
     _formKey.currentState.save();
 
-    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
+    AuthNotifier authNotifier =
+        Provider.of<AuthNotifier>(context, listen: false);
 
     if (_authMode == AuthMode.Login) {
       login(_user, authNotifier);
@@ -168,10 +170,14 @@ class _LoginState extends State<Login> {
                     style: TextStyle(fontSize: 36, color: Colors.white),
                   ),
                   SizedBox(height: 32),
-                  _authMode == AuthMode.Signup ? _buildDisplayNameField() : Container(),
+                  _authMode == AuthMode.Signup
+                      ? _buildDisplayNameField()
+                      : Container(),
                   _buildEmailField(),
                   _buildPasswordField(),
-                  _authMode == AuthMode.Signup ? _buildConfirmPasswordField() : Container(),
+                  _authMode == AuthMode.Signup
+                      ? _buildConfirmPasswordField()
+                      : Container(),
                   SizedBox(height: 32),
                   ButtonTheme(
                     minWidth: 200,
@@ -183,8 +189,9 @@ class _LoginState extends State<Login> {
                       ),
                       onPressed: () {
                         setState(() {
-                          _authMode =
-                              _authMode == AuthMode.Login ? AuthMode.Signup : AuthMode.Login;
+                          _authMode = _authMode == AuthMode.Login
+                              ? AuthMode.Signup
+                              : AuthMode.Login;
                         });
                       },
                     ),

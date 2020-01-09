@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>523882408312-8b4dg1c0lv3jugsql5r6k8e0bk8qrogg.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.523882408312-8b4dg1c0lv3jugsql5r6k8e0bk8qrogg</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>523882408312-fsd355bldgg5p6jpig85r722sjc3btjr.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAfmZ37RUZTgbg32-J_i-CoqFfjeccKC70</string>
+	<key>GCM_SENDER_ID</key>
+	<string>523882408312</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.kickit69.flutterApp</string>
+	<key>PROJECT_ID</key>
+	<string>kickitv2</string>
+	<key>STORAGE_BUCKET</key>
+	<string>kickitv2.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:523882408312:ios:4c1950a3ade5a92396008d</string>
+	<key>DATABASE_URL</key>
+	<string>https://kickitv2.firebaseio.com</string>
+</dict>
+</plist>

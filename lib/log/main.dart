@@ -3,9 +3,9 @@ import 'package:flutter_ui_designs/log/SignUp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_ui_designs/log/HomePage.dart';
+import 'package:flutter_ui_designs/notifier/auth_notifier.dart';
 import 'package:provider/provider.dart';
 
-import 'notifier/auth_notifier.dart';
 import 'package:flutter_ui_designs/notifier/food_notifier.dart';
 
 void main() => runApp(MultiProvider(
@@ -17,7 +17,7 @@ void main() => runApp(MultiProvider(
           builder: (context) => FoodNotifier(),
         ),
       ],
-      child: MyApp(),
+      child: HomePage(),
     ));
 
 class MyApp extends StatelessWidget {
@@ -33,9 +33,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(),
       home: HomePage(),
       routes: {
-        '/home': (BuildContext context)=> HomePage(),
-        '/signin': (BuildContext context)=> SignIn(),
-        '/signup': (BuildContext context)=> SignUp(),
+        '/home': (BuildContext context) => HomePage(),
+        '/signin': (BuildContext context) => SignIn(),
+        '/signup': (BuildContext context) => SignUp(),
       },
     );
   }

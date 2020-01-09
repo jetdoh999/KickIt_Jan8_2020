@@ -1,8 +1,8 @@
-import 'package:brew_crew/screens/wrapper.dart';
-import 'package:brew_crew/services/auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ui_designs/cofee/models/user.dart';
+import 'package:flutter_ui_designs/cofee/screens/wrapper.dart';
+import 'package:flutter_ui_designs/cofee/services/auth.dart';
 import 'package:provider/provider.dart';
-import 'package:brew_crew/models/user.dart';
 
 void main() => runApp(MyApp());
 
