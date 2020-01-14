@@ -1,12 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
+import 'package:flutter_ui_designs/blog/home.dart';
 
 import 'package:google_sign_in/google_sign_in.dart';
-
-import 'HomePage.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -35,6 +35,13 @@ class _SignInState extends State<SignIn> {
     });
   }
 
+  gotoHome() {
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            fullscreenDialog: true, builder: (context) => HomePage()));
+  }
+
   /* Method for Navigation to Sign Up page (optional) */
 
   navigateToSignUpScreen() {
@@ -48,6 +55,7 @@ class _SignInState extends State<SignIn> {
   @override
   void initState() {
     super.initState();
+    print("This Page");
     this.checkAuthentication();
   }
 
@@ -65,7 +73,7 @@ class _SignInState extends State<SignIn> {
           password: _passwaord,
         );
       } catch (e) {
-        showError(e);
+        showError("Hey $e");
       }
     }
   }
@@ -148,13 +156,13 @@ class _SignInState extends State<SignIn> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Hero(
-                  tag: "KickIt",
-                  child:  Container(
-                    height: 120,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage("assets/atro/logo.png"),
-                            fit: BoxFit.fitWidth)))),
+                    tag: "KickIt",
+                    child: Container(
+                        height: 120,
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage("assets/atro/logo.png"),
+                                fit: BoxFit.fitWidth)))),
                 SizedBox(height: 65),
                 Form(
                   key: _formkey,

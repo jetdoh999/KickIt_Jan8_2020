@@ -16,6 +16,11 @@ enum PageEnum {
 }
 
 class TwoTab extends StatefulWidget {
+  final String name;
+  final String address;
+  final String level;
+
+  TwoTab({Key key, this.name, this.address, this.level}) : super(key: key);
   @override
   _TwoTabState createState() {
     return _TwoTabState();
@@ -24,27 +29,47 @@ class TwoTab extends StatefulWidget {
 
 class _TwoTabState extends State<TwoTab> {
   int counter = 0;
+  static String name, addr, level;
 
   _onSelect(PageEnum value) {
     switch (value) {
       case PageEnum.firstPage:
-       print('First');
+        print('First');
         routeToCreateTeam();
         break;
       case PageEnum.secondPage:
-       print('Second');
+        print('Second');
         break;
     }
   }
 
-  void routeToCreateTeam(){
-    MaterialPageRoute materialPageRoute = MaterialPageRoute(
-      builder: (BuildContext buildContext){return CreateTeam();});
+  void routeToCreateTeam() {
+    MaterialPageRoute materialPageRoute =
+        MaterialPageRoute(builder: (BuildContext buildContext) {
+      return CreateTeam();
+    });
     Navigator.of(context).push(materialPageRoute);
+  }
+
+  setDetail() {
+    print("Set");
+    setState(() {
+      name = widget.name;
+      level = widget.level;
+      addr = widget.address;
+    });
+  }
+
+  @override
+  void initState() {
+    print("${widget.name} ${widget.level} ${widget.address}");
+    setDetail();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    print("$name $level $addr");
     return MaterialApp(
       home: Container(
         decoration: BoxDecoration(
@@ -168,29 +193,30 @@ class _TwoTabState extends State<TwoTab> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
-                                          
-              Flexible(
-              child: Container(
-                padding: EdgeInsets.all(8.0),
-                margin: EdgeInsets.all(4.0),
-                decoration: BoxDecoration(
-                  color: Colors.black45,
-                  borderRadius: BorderRadius.all(Radius.circular(4.0))),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Flexible(
-                      child: Container(
-                        child: Text(
-                          'Beginner',
-                          style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          )
-                        ),
-                      )
-                    ),])),),
-                                            
+                                      Flexible(
+                                        child: Container(
+                                            padding: EdgeInsets.all(8.0),
+                                            margin: EdgeInsets.all(4.0),
+                                            decoration: BoxDecoration(
+                                                color: Colors.black45,
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(4.0))),
+                                            child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  Flexible(
+                                                      child: Container(
+                                                    child: Text(
+                                                        level == null
+                                                            ? 'Beginner'
+                                                            : level,
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 12,
+                                                        )),
+                                                  )),
+                                                ])),
+                                      ),
                                       PopupMenuButton<PageEnum>(
                                         onSelected: _onSelect,
                                         child: Icon(Icons.menu,
@@ -209,7 +235,7 @@ class _TwoTabState extends State<TwoTab> {
                                       ),
                                     ],
                                   ),
-                                 ),
+                                ),
                               ]),
                               Positioned(
                                 top: 265.0,
@@ -453,68 +479,79 @@ class _TwoTabState extends State<TwoTab> {
                                 padding: EdgeInsets.only(
                                     top: 345.0, left: 130.0, right: 0),
                                 child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
                                       Flexible(
-                                      child: Container(
-                                          height: 90,
-                                          width: 170,
-                                          color: Colors.transparent,
-                                          padding: EdgeInsets.all(1),
-                                          child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Container(
-                                                    child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    Text(
-                                                      'ทีมไหน FC',
-                                                      overflow:
-                                                          TextOverflow.fade,
-                                                      maxLines: 2,
-                                                      softWrap: true,
-                                                      style: TextStyle(
-                                                          fontFamily:
-                                                              'Opensans',
-                                                          fontSize: 19,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color: Colors.black),
-                                                    ),
-                                                    Text(
-                                                      '25 Member',
-                                                      overflow:
-                                                          TextOverflow.fade,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                          color: Colors.black),
-                                                    ),
-                                                    Text(
-                                                      'Muang, Rayong, Thailand',
-                                                      overflow:
-                                                          TextOverflow.fade,
-                                                      maxLines: 1,
-                                                      softWrap: true,
-                                                      style: TextStyle(
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                          color: Colors.black),
-                                                    ),
-                                                  ],
-                                                )),
-                                              ])),),
-                                      
+                                        child: Container(
+                                            height: 90,
+                                            width: 170,
+                                            color: Colors.transparent,
+                                            padding: EdgeInsets.all(1),
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Container(
+                                                      child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: <Widget>[
+                                                        Text(
+                                                          name == null
+                                                              ? 'ทีมไหน FC'
+                                                              : name,
+                                                          overflow:
+                                                              TextOverflow.fade,
+                                                          maxLines: 2,
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              fontFamily:
+                                                                  'Opensans',
+                                                              fontSize: 19,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color:
+                                                                  Colors.black),
+                                                        ),
+                                                        Text(
+                                                          '25 Member',
+                                                          overflow:
+                                                              TextOverflow.fade,
+                                                          maxLines: 1,
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              color:
+                                                                  Colors.black),
+                                                        ),
+                                                        Text(
+                                                            addr == null
+                                                                ? 'Muang, Rayong, Thailand'
+                                                                : addr,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .fade,
+                                                            maxLines: 1,
+                                                            softWrap: true,
+                                                            style: TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                                color: Colors
+                                                                    .black))
+                                                      ]))
+                                                ])),
+                                      ),
                                       Container(
                                         color: Colors.transparent,
                                         child: Column(
@@ -675,7 +712,6 @@ class _TwoTabState extends State<TwoTab> {
                                       ]),
                                 ),
                               ),
-                              
                             ],
                           ),
                         ),

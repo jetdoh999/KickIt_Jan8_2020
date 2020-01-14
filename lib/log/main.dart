@@ -17,7 +17,7 @@ void main() => runApp(MultiProvider(
           builder: (context) => FoodNotifier(),
         ),
       ],
-      child: HomePage(),
+      child: MyApp(),
     ));
 
 class MyApp extends StatelessWidget {
@@ -33,9 +33,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(),
       home: HomePage(),
       routes: {
-        '/home': (BuildContext context) => HomePage(),
-        '/signin': (BuildContext context) => SignIn(),
-        '/signup': (BuildContext context) => SignUp(),
+        '/home': (BuildContext context)=> HomePage(),
+        '/signin': (BuildContext context)=> SignIn(),
+        '/signup': (BuildContext context)=> SignUp(),
       },
     );
   }

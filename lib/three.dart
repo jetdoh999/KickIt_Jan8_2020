@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_ui_designs/log/HomePage.dart';
 
 class ThreeTab extends StatefulWidget {
   @override
@@ -117,6 +118,24 @@ class _ThreeTab extends State<ThreeTab> {
                           child: InkWell(
                               onTap: () {
                                 print("tapped");
+                                print(nameTeams[index]);
+                                print(levels[index]);
+                                print(addresss[index]);
+                                Navigator.pushReplacement(
+                                  context,
+                                  PageRouteBuilder(
+                                      pageBuilder: (c, a1, a2) => HomePage(
+                                          currentIndex: 1,
+                                          teamName: nameTeams[index],
+                                          teamLevel: levels[index],
+                                          teamAddr: addresss[index]),
+                                      transitionsBuilder:
+                                          (c, anim, a2, child) =>
+                                              FadeTransition(
+                                                  opacity: anim, child: child),
+                                      transitionDuration:
+                                          Duration(milliseconds: 20)),
+                                );
                               },
                               child: SizedBox(
                                   height: 100.0,
@@ -142,14 +161,13 @@ class _ThreeTab extends State<ThreeTab> {
                           left: .0,
                           right: .0,
                           child: Center(
-                            child: CircleAvatar(
+                              child: CircleAvatar(
                             radius: 30.0,
                             backgroundImage: NetworkImage(
                               urlTeams[index],
                             ),
                             backgroundColor: Colors.transparent,
-                          )
-                          ),
+                          )),
                         )
                       ],
                     );

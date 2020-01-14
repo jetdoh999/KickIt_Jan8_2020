@@ -20,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
+    print("Hello this page");
     checkStatus();
   }
 
@@ -34,7 +35,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void moveToApps() {
     MaterialPageRoute materialPageRoute =
         MaterialPageRoute(builder: (BuildContext context) {
-      return CustomAppBarDemo(currentIndex: 0,);
+      return CustomAppBarDemo(
+        currentIndex: 0,
+      );
     });
     Navigator.of(context).pushAndRemoveUntil(materialPageRoute,
         (Route<dynamic> route) {
@@ -47,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Email',
+          'Email2',
           style: kLabelStyle,
         ),
         SizedBox(height: 10.0),
