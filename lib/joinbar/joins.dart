@@ -10,10 +10,7 @@ class Joins extends StatefulWidget {
   }
 }
 
-enum MyDialogAction {
-  yes,
-  no,
-}
+enum MyDialogAction { yes, no }
 
 void _dialogResult(MyDialogAction value) {
   print('You selected $value');
@@ -53,8 +50,6 @@ class _Joins extends State<Joins> {
       //   index++;
       // }
     });
-
-    
   }
 
   AlertDialog dialog = AlertDialog(

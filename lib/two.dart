@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_ui_designs/teamstats.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_ui_designs/scaffold/create_team.dart';
 import 'package:like_button/like_button.dart';
 import 'package:flutter_ui_designs/join.dart';
 import 'package:flutter_ui_designs/crud/presentation/pages/home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'teampage/pages/team_member_pages.dart';
 
@@ -28,10 +30,12 @@ class TwoTab extends StatefulWidget {
 }
 
 class _TwoTabState extends State<TwoTab> {
-  final databaseReference = Firestore.instance;
-
   int counter = 0;
-  static String name, addr, level;
+
+  final databaseReference = Firestore.instance;
+  static String name, addr, level, uid;
+  List<String> requestmember = List<String>();
+  var channelName;
 
   _onSelect(PageEnum value) {
     switch (value) {
@@ -62,29 +66,74 @@ class _TwoTabState extends State<TwoTab> {
     });
   }
 
-  // Future<dynamic> onLoad() async {
-  //   await databaseReference
-  //       .collection("Team")
-  //       .getDocuments()
-  //       .then((QuerySnapshot snapshot) {
-  //     snapshot.documents
-  //         .where((val) => val.data['NameTeam'] == widget.name)
-  //         .forEach((f) {
-  //       if (f.data.length > 0) {
-         
-      
-       
-  //         firstname = f.data['first_name'];
-  //         lastName = f.data['last_name'];
-  //         img = f.data['user_img_profile'];
-  //       }
-  //     });
-  //   });
-  // }
+  updateUser(String uid) async {
+    Firestore firestore = Firestore.instance;
+    var result;
+
+    CollectionReference collectionReference = firestore.collection('Team');
+    await collectionReference
+        .document(channelName)
+        .snapshots()
+        .listen((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.data['requestMember'] == null) {
+        print("null naja");
+        result.add(uid);
+        Firestore.instance
+            .collection('Team')
+            .document(channelName)
+            .updateData({'requestMember': result});
+      } else if (documentSnapshot.data['requestMember'] != null) {
+        result = documentSnapshot.data['requestMember'];
+
+        print('document = ${documentSnapshot.data['requestMember']}');
+        print(result.contains(uid));
+        print(result[0]);
+        print(uid);
+
+        if (result.contains(uid) == true) {
+          print("duplicate");
+          // print(currentList.contains(uid));
+        } else {
+          List<String> uidList = List<String>.from(result);
+
+          uidList.add(uid);
+          Firestore.instance
+              .collection('Team')
+              .document(channelName)
+              .updateData({'requestMember': uidList});
+        }
+      }
+    });
+  }
+
+  getTeamToken(String teamname) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    QuerySnapshot snapshot =
+        await databaseReference.collection("Team").getDocuments();
+
+    for (var i = 0; i < snapshot.documents.length; i++) {
+      if (snapshot.documents.elementAt(i).data['NameTeam'] == teamname) {
+        channelName = snapshot.documents.elementAt(i).documentID;
+      }
+    }
+    print('channelName is $channelName');
+
+    await prefs.setString("token", channelName);
+  }
+
+  Future<void> findUID() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth.currentUser().then((object) {
+      uid = object.uid;
+      print("uid is $uid");
+    });
+  }
 
   @override
   void initState() {
     print("${widget.name} ${widget.level} ${widget.address}");
+    getTeamToken(widget.name);
+    findUID();
     setDetail();
     super.initState();
   }
@@ -340,11 +389,14 @@ class _TwoTabState extends State<TwoTab> {
                                                         splashColor:
                                                             Colors.white,
                                                         onTap: () {
-                                                          Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder: (_) =>
-                                                                      Join()));
+                                                          updateUser(uid);
+                                                          // Navigator.push(
+                                                          //     context,
+                                                          //     MaterialPageRoute(
+                                                          //         builder: (_) =>
+                                                          //             Join(
+                                                          //                 teamID:
+                                                          //                     channelName)));
                                                         },
                                                         child: Column(
                                                           mainAxisAlignment:
@@ -352,11 +404,11 @@ class _TwoTabState extends State<TwoTab> {
                                                                   .center,
                                                           children: <Widget>[
                                                             Icon(
-                                                              Icons.person_add,
-                                                              size: 28,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
+                                                                Icons
+                                                                    .person_add,
+                                                                size: 28,
+                                                                color: Colors
+                                                                    .white),
                                                             RichText(
                                                               textAlign:
                                                                   TextAlign
