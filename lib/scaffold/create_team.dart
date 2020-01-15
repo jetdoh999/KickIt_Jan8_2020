@@ -16,23 +16,25 @@ class CreateTeam extends StatefulWidget {
 }
 
 class _CreateTeamState extends State<CreateTeam> {
+  
   // Field
   File file;
   final formkey = GlobalKey<FormState>();
   String nameTeam, address, level, urlTeam, uidLogin;
+  List<String> memberList = List<String>();
 
   // Method
   @override
   void initState() {
     super.initState();
     findUid();
+    print('uidLogin = $uidLogin');
   }
 
   Future<void> findUid() async {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     FirebaseUser firebaseUser = await firebaseAuth.currentUser();
     uidLogin = firebaseUser.uid;
-    
   }
 
   Future<void> uploadImageToStorage() async {
@@ -55,12 +57,14 @@ class _CreateTeamState extends State<CreateTeam> {
 
   Future<void> updateFireStore() async {
     Firestore firestore = Firestore.instance;
+    memberList.add(uidLogin);
 
     Map<String, dynamic> map = Map();
     map['Address'] = address;
     map['Level'] = level;
     map['NameTeam'] = nameTeam;
     map['UrlTeam'] = urlTeam;
+    map['MemberTeam'] = memberList;
 
     print('uidLogin = $uidLogin');
 
@@ -69,10 +73,16 @@ class _CreateTeamState extends State<CreateTeam> {
         .document(uidLogin)
         .setData(map)
         .then((response) {
-          print('Create Team Success');
-          MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext buildContext){return ThreeTab();});
-          Navigator.of(context).pushAndRemoveUntil(materialPageRoute, (Route<dynamic> route){return false;});
-        });
+      print('Create Team Success');
+      MaterialPageRoute materialPageRoute =
+          MaterialPageRoute(builder: (BuildContext buildContext) {
+        return ThreeTab();
+      });
+      Navigator.of(context).pushAndRemoveUntil(materialPageRoute,
+          (Route<dynamic> route) {
+        return false;
+      });
+    });
   }
 
   Future takeFile(ImageSource imageSource) async {

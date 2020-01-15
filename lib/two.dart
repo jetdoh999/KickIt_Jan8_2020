@@ -1,7 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_ui_designs/teamstats.dart';
-import 'package:flutter_ui_designs/teamtab.dart';
 import 'package:flutter_ui_designs/calendar.dart';
 import 'package:flutter_ui_designs/scaffold/create_team.dart';
 import 'package:like_button/like_button.dart';
@@ -28,6 +28,8 @@ class TwoTab extends StatefulWidget {
 }
 
 class _TwoTabState extends State<TwoTab> {
+  final databaseReference = Firestore.instance;
+
   int counter = 0;
   static String name, addr, level;
 
@@ -59,6 +61,26 @@ class _TwoTabState extends State<TwoTab> {
       addr = widget.address;
     });
   }
+
+  // Future<dynamic> onLoad() async {
+  //   await databaseReference
+  //       .collection("Team")
+  //       .getDocuments()
+  //       .then((QuerySnapshot snapshot) {
+  //     snapshot.documents
+  //         .where((val) => val.data['NameTeam'] == widget.name)
+  //         .forEach((f) {
+  //       if (f.data.length > 0) {
+         
+      
+       
+  //         firstname = f.data['first_name'];
+  //         lastName = f.data['last_name'];
+  //         img = f.data['user_img_profile'];
+  //       }
+  //     });
+  //   });
+  // }
 
   @override
   void initState() {

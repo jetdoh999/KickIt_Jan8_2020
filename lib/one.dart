@@ -57,6 +57,7 @@ class _OneTabState extends State<OneTab> {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     await firebaseAuth.currentUser().then((object) {
       uidLogin = object.uid;
+      print("uid is $uidLogin");
       findPathUrlImage();
       readAllDataUser();
     });
@@ -64,6 +65,7 @@ class _OneTabState extends State<OneTab> {
 
   Future<void> readAllDataUser() async {
     Firestore firestore = Firestore.instance;
+    print("uid is $uidLogin");
     CollectionReference collectionReference = firestore.collection('User');
     await collectionReference
         .document(uidLogin)
