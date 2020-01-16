@@ -262,7 +262,7 @@ class _Joins extends State<Joins> {
 
     return Container(
         width: screenWidth,
-        height: screenHeight * 0.88,
+        height: screenHeight * 0.85,
         child: requestListResult());
   }
 }

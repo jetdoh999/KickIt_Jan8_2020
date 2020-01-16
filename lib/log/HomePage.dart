@@ -14,10 +14,12 @@ import 'package:morpheus/morpheus.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 
 class HomePage extends StatefulWidget {
-  final int currentIndex;
-  final String teamName;
-  final String teamLevel;
-  final String teamAddr;
+  //////////////////////////////
+  //ตั้งให้มีการรับค่าสำหรับการเปลี่ยนหน้า
+  final int currentIndex; //หน้าหลักที่จะแสดงเมื่อ HomePage ถูกเรียก
+  final String teamName; //ชื่อทีมที่ถูกเลือกหากถูกเลือกมาจากหน้ารวมทีม
+  final String teamLevel; //เลเวลทีมที่ถูกเลือกหากถูกเลือกมาจากหน้ารวมทีม
+  final String teamAddr; //ที่อยู่ทีมที่ถูกเลือกหากถูกเลือกมาจากหน้ารวมทีม
   HomePage(
       {Key key,
       this.currentIndex,
@@ -25,6 +27,8 @@ class HomePage extends StatefulWidget {
       this.teamAddr,
       this.teamLevel})
       : super(key: key);
+  //กำหนดลงในConstuctor
+  //////////////////////////////
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -66,10 +70,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    //////////////////////////////
+    //กำหนดค่าเริ่มต้นกรณีถูกเรียกมาจากหน้ารวมทีมหรืออื่นๆ
     widget.currentIndex == null
         ? _currentIndex = 0
         : _currentIndex = widget.currentIndex;
- 
+    //////////////////////////////
+
     super.initState();
     this.checkAuthentication();
     this.getUser();
@@ -79,10 +86,13 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     List<Widget> _screens = [
       OneTab(),
+      //////////////////////////////
+      ///ระบุค่ารายละเอียดของทีมที่เลือกไปสู่หน้ารายละเอียดทีม
       TwoTab(
           name: widget.teamName,
           address: widget.teamAddr,
           level: widget.teamLevel),
+      //////////////////////////////
       SevenTab(),
       ThreeTab(),
       Feedx(),
