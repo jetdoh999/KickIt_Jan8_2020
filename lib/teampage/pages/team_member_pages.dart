@@ -1,11 +1,70 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ui_designs/log/model/memberModel.dart';
 import 'package:flutter_ui_designs/one.dart';
 
-class TeamMembersPage extends StatelessWidget {
-  final List<Member> memberList;
+class TeamMembersPage extends StatefulWidget {
+  final String teamID;
 
-  TeamMembersPage({Key key, @required this.memberList}) : super(key: key);
+  TeamMembersPage({Key key, @required this.teamID}) : super(key: key);
+  _TeamMembersPage createState() {
+    return _TeamMembersPage();
+  }
+}
+
+class _TeamMembersPage extends State<TeamMembersPage> {
+  List<Member> memberList = List<Member>();
+
+  getMemberList(String uid) async {
+    CollectionReference collectionReference =
+        Firestore.instance.collection('Team');
+
+    memberList.clear();
+
+    collectionReference
+        .document(uid)
+        .snapshots()
+        .listen((DocumentSnapshot documentSnapshot) {
+      print('document = ${documentSnapshot.data}');
+
+      for (var i = 0; i < documentSnapshot.data['MemberTeam'].length; i++) {
+        addMember(documentSnapshot.data['MemberTeam'][i]);
+      }
+    });
+  }
+
+  addMember(String uid) async {
+    Firestore firestore = Firestore.instance;
+
+    CollectionReference collectionReference = firestore.collection('User');
+    await collectionReference
+        .document(uid)
+        .snapshots()
+        .listen((DocumentSnapshot documentSnapshot) {
+      var result = documentSnapshot.data;
+
+      String name = result['profileName'];
+      String age = result['age'];
+      String position = result['position'];
+      String number = result['shirtNumber'];
+
+      Member member = Member(
+          uid: uid, name: name, age: age, position: position, no: number);
+
+      setState(() {
+        memberList.add(member);
+      });
+    });
+    print("final length ${memberList.length}");
+  }
+
+  @override
+  void initState() {
+    print(widget.teamID);
+    getMemberList(widget.teamID);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     print(memberList.length);

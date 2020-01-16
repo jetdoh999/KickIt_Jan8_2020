@@ -69,8 +69,6 @@ class _Joins extends State<Joins> {
         .document(widget.teamID)
         .snapshots()
         .listen((DocumentSnapshot documentSnapshot) {
-      // print('document = ${documentSnapshot.data['requestMember']}');
-
       for (var i = 0; i < documentSnapshot.data['requestMember'].length; i++) {
         readAllDataUser(documentSnapshot.data['requestMember'][i]);
       }

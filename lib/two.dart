@@ -36,7 +36,7 @@ class _TwoTabState extends State<TwoTab> {
   final databaseReference = Firestore.instance;
   static String name, addr, level, uid;
   List<String> requestmember = List<String>();
-  List<Member> memberList = List<Member>();
+
   var channelName;
 
   _onSelect(PageEnum value) {
@@ -87,11 +87,6 @@ class _TwoTabState extends State<TwoTab> {
       } else if (documentSnapshot.data['requestMember'] != null) {
         var result = documentSnapshot.data['requestMember'];
 
-        print('document = ${documentSnapshot.data['requestMember']}');
-        print(result.contains(uid));
-        print(result[0]);
-        print(uid);
-
         if (result.contains(uid) == true) {
           print("duplicate");
         } else {
@@ -131,56 +126,9 @@ class _TwoTabState extends State<TwoTab> {
     });
   }
 
-  addMember(String uid) async {
-    Firestore firestore = Firestore.instance;
-
-    CollectionReference collectionReference = firestore.collection('User');
-    await collectionReference
-        .document(uid)
-        .snapshots()
-        .listen((DocumentSnapshot documentSnapshot) {
-      var result = documentSnapshot.data;
-
-      String name = result['profileName'];
-      String age = result['age'];
-      String position = result['position'];
-      String number = result['shirtNumber'];
-
-      Member member = Member(
-          uid: uid, name: name, age: age, position: position, no: number);
-
-      setState(() {
-        memberList.add(member);
-      });
-    });
-    print("final length ${memberList.length}");
-  }
-
-  Future<void> getMemberList() async {
-    CollectionReference collectionReference =
-        Firestore.instance.collection('Team');
-
-    memberList.clear();
-
-    print(memberList.length);
-    collectionReference
-        .document(channelName)
-        .snapshots()
-        .listen((DocumentSnapshot documentSnapshot) {
-      print('document = ${documentSnapshot.data['MemberTeam']}');
-
-      for (var i = 0; i < documentSnapshot.data['MemberTeam'].length; i++) {
-        addMember(documentSnapshot.data['MemberTeam'][i]);
-      }
-    });
-  }
-
   @override
   void initState() {
-    memberList.clear();
-    getTeamToken(widget.name).then((onValue) {
-      getMemberList();
-    });
+    getTeamToken(widget.name);
     findUID();
     setDetail();
 
@@ -485,8 +433,8 @@ class _TwoTabState extends State<TwoTab> {
                                                               MaterialPageRoute(
                                                                   builder: (_) =>
                                                                       TeamMembersPage(
-                                                                          memberList:
-                                                                              memberList)));
+                                                                          teamID:
+                                                                              channelName)));
                                                         },
                                                         child: Column(
                                                           mainAxisAlignment:
