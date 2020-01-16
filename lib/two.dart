@@ -19,11 +19,14 @@ enum PageEnum {
 }
 
 class TwoTab extends StatefulWidget {
+  //////////////////////////////
+  //ตั้งให้มีการรับค่าสำหรับทีมที่ถูกเลือกมาแสดง
   final String name;
   final String address;
   final String level;
-
   TwoTab({Key key, this.name, this.address, this.level}) : super(key: key);
+  //////////////////////////////
+
   @override
   _TwoTabState createState() {
     return _TwoTabState();
@@ -34,10 +37,11 @@ class _TwoTabState extends State<TwoTab> {
   int counter = 0;
 
   final databaseReference = Firestore.instance;
-  static String name, addr, level, uid;
-  List<String> requestmember = List<String>();
 
-  var channelName;
+//////////////////////////////
+/////เก็บค่า ชื่อทีม ที่อยู่ทีม เลเวล ไอดียูสเซอร์ ไอดีของทีมที่แสดงกรณีเลือกมาจากหน้ารวมทีม
+  static String name, addr, level, uid, channelName;
+//////////////////////////////
 
   _onSelect(PageEnum value) {
     switch (value) {
@@ -59,16 +63,9 @@ class _TwoTabState extends State<TwoTab> {
     Navigator.of(context).push(materialPageRoute);
   }
 
-  setDetail() {
-    print("Set");
-    setState(() {
-      name = widget.name;
-      level = widget.level;
-      addr = widget.address;
-    });
-  }
-
-  updateUser(String uid) async {
+  //////////////////////////////
+  /////Functionสำหรับใบผู้ใช้งานกดขอเข้าร่วมทีม
+  requestToJoinTeam(String uid) async {
     Firestore firestore = Firestore.instance;
 
     CollectionReference collectionReference = firestore.collection('Team');
@@ -76,20 +73,25 @@ class _TwoTabState extends State<TwoTab> {
         .document(channelName)
         .snapshots()
         .listen((DocumentSnapshot documentSnapshot) {
+      //ดึงข้อมูลเพื่อตรวจสอบว่ามีVariable requestMember สำหรับเก็บคนขอเข้าทีมหรือยัง
       if (documentSnapshot.data['requestMember'] == null) {
+        //กรณียังไม่มี
         print("null naja");
         List<String> newRequest = List<String>();
         newRequest.add(uid);
-        Firestore.instance
-            .collection('Team')
-            .document(channelName)
-            .updateData({'requestMember': newRequest});
+        Firestore.instance.collection('Team').document(channelName).updateData({
+          'requestMember': newRequest
+        }); //เพิ่มลิสท์สำหรับคนขอเข้าร่วมทีมเข้าไปในFirebase firestore
       } else if (documentSnapshot.data['requestMember'] != null) {
+        //กรณีเคยมีการขอเข้าร่วมมาก่อนแล้ว
+        //ดึงข้อมูลจาก firestore มาเก็บในตัวแปร
         var result = documentSnapshot.data['requestMember'];
 
+        //ตรวจสอบว่าเคยขอไว้แล้วหรือยัง
         if (result.contains(uid) == true) {
           print("duplicate");
         } else {
+          //ถ้ายังจะทำการเพิ่มเข้าไป โดยเก็บเป็น array userID
           List<String> uidList = List<String>.from(result);
 
           uidList.add(uid);
@@ -102,22 +104,24 @@ class _TwoTabState extends State<TwoTab> {
     });
   }
 
+  /////FunctionสำหรับตรวจสอบID ของทีมปัจจุบัน
   Future<dynamic> getTeamToken(String teamname) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    QuerySnapshot snapshot =
-        await databaseReference.collection("Team").getDocuments();
+    QuerySnapshot snapshot = await databaseReference
+        .collection("Team")
+        .getDocuments(); //ดึงListTeamที่มีมาทั้งหมด
 
     for (var i = 0; i < snapshot.documents.length; i++) {
       if (snapshot.documents.elementAt(i).data['NameTeam'] == teamname) {
+        //ค้นหาทีมที่ชื่อตรงกับทีมที่ถูกเลือกอยู่ เพืจัดเก็บเป็น teamID
         setState(() {
           channelName = snapshot.documents.elementAt(i).documentID;
         });
       }
     }
-    print('channelName is $channelName');
-
     await prefs.setString("token", channelName);
   }
+  //////////////////////////////
 
   Future<void> findUID() async {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
@@ -128,10 +132,17 @@ class _TwoTabState extends State<TwoTab> {
 
   @override
   void initState() {
+    //////////////////////////////
+    //เรียกใช้ค้นหาTeamIDเมื่อโหลดหน้าแรก
     getTeamToken(widget.name);
-    findUID();
-    setDetail();
+    //////////////////////////////
 
+    findUID();
+    setState(() {
+      name = widget.name;
+      level = widget.level;
+      addr = widget.address;
+    });
     super.initState();
   }
 
@@ -385,6 +396,8 @@ class _TwoTabState extends State<TwoTab> {
                                                         splashColor:
                                                             Colors.white,
                                                         onTap: () {
+                                                          //////////////////////////////
+                                                          ///กรณีเราเป็นเจ้าของทีมจะไปหน้ารายชื่อคนขอเข้า
                                                           if (uid ==
                                                               channelName) {
                                                             Navigator.push(
@@ -394,8 +407,11 @@ class _TwoTabState extends State<TwoTab> {
                                                                         teamID:
                                                                             channelName)));
                                                           } else {
-                                                            updateUser(uid);
+                                                            //กรณีเป็นคนขอเข้าจะเป็นการลงชื่อขอเข้าทีม
+                                                            requestToJoinTeam(
+                                                                uid);
                                                           }
+                                                          //////////////////////////////
                                                         },
                                                         child: Column(
                                                             mainAxisAlignment:
@@ -428,6 +444,9 @@ class _TwoTabState extends State<TwoTab> {
                                                         splashColor:
                                                             Colors.white,
                                                         onTap: () {
+                                                          //////////////////////////////
+                                                          ///ไปสุ่หน้าสมาชิกทีม
+                                                          ///ส่งค่า teamID ไปเพือไปค้นหารายชื่อในหน้าต่อไป
                                                           Navigator.push(
                                                               context,
                                                               MaterialPageRoute(
@@ -435,6 +454,7 @@ class _TwoTabState extends State<TwoTab> {
                                                                       TeamMembersPage(
                                                                           teamID:
                                                                               channelName)));
+                                                          //////////////////////////////
                                                         },
                                                         child: Column(
                                                           mainAxisAlignment:

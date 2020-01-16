@@ -13,9 +13,12 @@ enum PageEnum {
 }
 
 class Join extends StatefulWidget {
+  //////////////////////////////
+  //ตั้งให้มีการรับค่าสำหรับทีมที่ถูกเลือกมาแสดง
   final String teamID;
 
   Join({Key key, @required this.teamID}) : super(key: key);
+  //////////////////////////////
   @override
   State<StatefulWidget> createState() {
     return _Join();
@@ -91,7 +94,7 @@ class _Join extends State<Join> {
         ),
         body: Container(
             child: Column(children: <Widget>[
-          Joins(teamID: widget.teamID),
+          Joins(teamID: widget.teamID) //ส่งค่าTeamIDไปยังหน้าลิสท์คนรีเควส
         ])));
   }
 }
