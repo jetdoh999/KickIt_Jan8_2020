@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_ui_designs/joinbar/joins.dart';
 import 'package:flutter_ui_designs/joinbar/myappbar.dart';
 import 'package:flutter_ui_designs/joinbar/myflexiableappbar.dart';
+import 'package:flutter_ui_designs/log/model/memberModel.dart';
 import 'package:flutter_ui_designs/scaffold/create_player.dart';
 
 enum PageEnum {
@@ -22,35 +23,8 @@ class Join extends StatefulWidget {
 }
 
 class _Join extends State<Join> {
-  Future<void> readAllDataUser() async {
-    CollectionReference collectionReference =
-        Firestore.instance.collection('Team');
-
-    collectionReference
-        .document(widget.teamID)
-        .snapshots()
-        .listen((DocumentSnapshot documentSnapshot) {
-      print('document = ${documentSnapshot.data}');
-
-      // if (valueDataUsers.length != 0) {
-      //   valueDataUsers.removeWhere((item) => item != null);
-      // }
-
-      // int index = 0;
-      // for (var string in keyData) {
-      //   String value = documentSnapshot.data[string];
-      //   setState(() {
-      //     valueDataUsers.add(value);
-      //   });
-      //   print('valueDataUsers[$index] = ${valueDataUsers[index]}');
-      //   index++;
-      // }
-    });
-  }
-
   @override
   void initState() {
-    readAllDataUser();
     super.initState();
   }
 
@@ -81,11 +55,10 @@ class _Join extends State<Join> {
           title: Text(
             "Join the Team",
             style: TextStyle(
-              color: Colors.black,
-              fontSize: 20,
-              letterSpacing: 1.0,
-              fontWeight: FontWeight.w900,
-            ),
+                color: Colors.black,
+                fontSize: 20,
+                letterSpacing: 1.0,
+                fontWeight: FontWeight.w900),
           ),
           backgroundColor: Colors.lightGreen,
           centerTitle: true,
@@ -99,30 +72,26 @@ class _Join extends State<Join> {
                             splashColor: Colors.white,
                             onTap: () {},
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.person_add,
-                                  size: 28,
-                                  color: Colors.black,
-                                ),
-                                RichText(
-                                  textAlign: TextAlign.center,
-                                  text: TextSpan(
-                                    text: "Invite",
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.black,
-                                    ),
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.person_add,
+                                    size: 28,
+                                    color: Colors.black,
                                   ),
-                                ),
-                              ],
-                            ))))),
+                                  RichText(
+                                      textAlign: TextAlign.center,
+                                      text: TextSpan(
+                                          text: "Invite",
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              color: Colors.black)))
+                                ]))))),
           ],
         ),
         body: Container(
             child: Column(children: <Widget>[
-          Joins(),
+          Joins(teamID: widget.teamID),
         ])));
   }
 }

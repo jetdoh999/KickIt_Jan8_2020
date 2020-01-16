@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_ui_designs/log/model/memberModel.dart';
 import 'package:flutter_ui_designs/teamstats.dart';
 import 'package:flutter_ui_designs/calendar.dart';
 import 'package:flutter_ui_designs/scaffold/create_team.dart';
@@ -35,6 +36,7 @@ class _TwoTabState extends State<TwoTab> {
   final databaseReference = Firestore.instance;
   static String name, addr, level, uid;
   List<String> requestmember = List<String>();
+  List<Member> memberList = List<Member>();
   var channelName;
 
   _onSelect(PageEnum value) {
@@ -68,7 +70,6 @@ class _TwoTabState extends State<TwoTab> {
 
   updateUser(String uid) async {
     Firestore firestore = Firestore.instance;
-    var result;
 
     CollectionReference collectionReference = firestore.collection('Team');
     await collectionReference
@@ -77,13 +78,14 @@ class _TwoTabState extends State<TwoTab> {
         .listen((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.data['requestMember'] == null) {
         print("null naja");
-        result.add(uid);
+        List<String> newRequest = List<String>();
+        newRequest.add(uid);
         Firestore.instance
             .collection('Team')
             .document(channelName)
-            .updateData({'requestMember': result});
+            .updateData({'requestMember': newRequest});
       } else if (documentSnapshot.data['requestMember'] != null) {
-        result = documentSnapshot.data['requestMember'];
+        var result = documentSnapshot.data['requestMember'];
 
         print('document = ${documentSnapshot.data['requestMember']}');
         print(result.contains(uid));
@@ -92,7 +94,6 @@ class _TwoTabState extends State<TwoTab> {
 
         if (result.contains(uid) == true) {
           print("duplicate");
-          // print(currentList.contains(uid));
         } else {
           List<String> uidList = List<String>.from(result);
 
@@ -106,14 +107,16 @@ class _TwoTabState extends State<TwoTab> {
     });
   }
 
-  getTeamToken(String teamname) async {
+  Future<dynamic> getTeamToken(String teamname) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     QuerySnapshot snapshot =
         await databaseReference.collection("Team").getDocuments();
 
     for (var i = 0; i < snapshot.documents.length; i++) {
       if (snapshot.documents.elementAt(i).data['NameTeam'] == teamname) {
-        channelName = snapshot.documents.elementAt(i).documentID;
+        setState(() {
+          channelName = snapshot.documents.elementAt(i).documentID;
+        });
       }
     }
     print('channelName is $channelName');
@@ -125,22 +128,67 @@ class _TwoTabState extends State<TwoTab> {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     await firebaseAuth.currentUser().then((object) {
       uid = object.uid;
-      print("uid is $uid");
+    });
+  }
+
+  addMember(String uid) async {
+    Firestore firestore = Firestore.instance;
+
+    CollectionReference collectionReference = firestore.collection('User');
+    await collectionReference
+        .document(uid)
+        .snapshots()
+        .listen((DocumentSnapshot documentSnapshot) {
+      var result = documentSnapshot.data;
+
+      String name = result['profileName'];
+      String age = result['age'];
+      String position = result['position'];
+      String number = result['shirtNumber'];
+
+      Member member = Member(
+          uid: uid, name: name, age: age, position: position, no: number);
+
+      setState(() {
+        memberList.add(member);
+      });
+    });
+    print("final length ${memberList.length}");
+  }
+
+  Future<void> getMemberList() async {
+    CollectionReference collectionReference =
+        Firestore.instance.collection('Team');
+
+    memberList.clear();
+
+    print(memberList.length);
+    collectionReference
+        .document(channelName)
+        .snapshots()
+        .listen((DocumentSnapshot documentSnapshot) {
+      print('document = ${documentSnapshot.data['MemberTeam']}');
+
+      for (var i = 0; i < documentSnapshot.data['MemberTeam'].length; i++) {
+        addMember(documentSnapshot.data['MemberTeam'][i]);
+      }
     });
   }
 
   @override
   void initState() {
-    print("${widget.name} ${widget.level} ${widget.address}");
-    getTeamToken(widget.name);
+    memberList.clear();
+    getTeamToken(widget.name).then((onValue) {
+      getMemberList();
+    });
     findUID();
     setDetail();
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    print("$name $level $addr");
     return MaterialApp(
       home: Container(
         decoration: BoxDecoration(
@@ -389,40 +437,40 @@ class _TwoTabState extends State<TwoTab> {
                                                         splashColor:
                                                             Colors.white,
                                                         onTap: () {
-                                                          updateUser(uid);
-                                                          // Navigator.push(
-                                                          //     context,
-                                                          //     MaterialPageRoute(
-                                                          //         builder: (_) =>
-                                                          //             Join(
-                                                          //                 teamID:
-                                                          //                     channelName)));
+                                                          if (uid ==
+                                                              channelName) {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (_) => Join(
+                                                                        teamID:
+                                                                            channelName)));
+                                                          } else {
+                                                            updateUser(uid);
+                                                          }
                                                         },
                                                         child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: <Widget>[
-                                                            Icon(
-                                                                Icons
-                                                                    .person_add,
-                                                                size: 28,
-                                                                color: Colors
-                                                                    .white),
-                                                            RichText(
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              text: TextSpan(
-                                                                text: "Joining",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 8,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ))))),
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: <Widget>[
+                                                              Icon(
+                                                                  Icons
+                                                                      .person_add,
+                                                                  size: 28,
+                                                                  color: Colors
+                                                                      .white),
+                                                              RichText(
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  text: TextSpan(
+                                                                      text:
+                                                                          "Joining",
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              8)))
+                                                            ]))))),
                                         SizedBox.fromSize(
                                             size: Size(50, 50),
                                             child: ClipOval(
@@ -436,19 +484,19 @@ class _TwoTabState extends State<TwoTab> {
                                                               context,
                                                               MaterialPageRoute(
                                                                   builder: (_) =>
-                                                                      TeamMembersPage()));
+                                                                      TeamMembersPage(
+                                                                          memberList:
+                                                                              memberList)));
                                                         },
                                                         child: Column(
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
                                                                   .center,
                                                           children: <Widget>[
-                                                            Icon(
-                                                              Icons.people,
-                                                              size: 28,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
+                                                            Icon(Icons.people,
+                                                                size: 28,
+                                                                color: Colors
+                                                                    .white),
                                                             RichText(
                                                               textAlign:
                                                                   TextAlign
