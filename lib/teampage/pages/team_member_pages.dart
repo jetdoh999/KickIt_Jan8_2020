@@ -102,8 +102,10 @@ class _TeamMembersPage extends State<TeamMembersPage> {
                     child: InkWell(
                         splashColor: Colors.black12,
                         onTap: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (_) => OneTab()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => OneTab(friendUid: item.uid)));
                         },
                         child: Container(
                             height: 140,
@@ -121,11 +123,36 @@ class _TeamMembersPage extends State<TeamMembersPage> {
                                       ClipRRect(
                                         borderRadius:
                                             BorderRadius.circular(4.0),
-                                        child: Image.asset(
-                                          'assets/default.png',
-                                          fit: BoxFit.cover,
-                                          width: 100,
-                                        ),
+                                        child: FutureBuilder<dynamic>(
+                                            future: Firestore.instance
+                                                .collection('Avatar')
+                                                .document(item.uid)
+                                                .get(),
+                                            builder: (BuildContext context,
+                                                AsyncSnapshot<dynamic>
+                                                    snapshot) {
+                                              String imgPath;
+                                              try {
+                                                imgPath =
+                                                    snapshot.data['PathURL'];
+                                              } on Exception catch (exception) {
+                                                imgPath =
+                                                    "https://firebasestorage.googleapis.com/v0/b/kickitv2.appspot.com/o/Avatar%2Favatar971469.jpg?alt=media&token=c3761dd0-435a-4378-8703-6a06cf793cf2";
+                                              } catch (error) {
+                                                imgPath =
+                                                    "https://firebasestorage.googleapis.com/v0/b/kickitv2.appspot.com/o/Avatar%2Favatar971469.jpg?alt=media&token=c3761dd0-435a-4378-8703-6a06cf793cf2";
+                                              }
+
+                                              print("$index ${snapshot.data}");
+                                              return snapshot.data != null
+                                                  ? Image.network(imgPath,
+                                                      fit: BoxFit.cover)
+                                                  : Image.asset(
+                                                      'assets/default.png',
+                                                      fit: BoxFit.cover,
+                                                      width: 100,
+                                                    );
+                                            }),
                                       ),
                                       SizedBox(
                                         width: 20,

@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_ui_designs/one.dart';
 
 class SevenTab extends StatefulWidget {
   State<StatefulWidget> createState() {
@@ -12,15 +13,17 @@ class SevenTab extends StatefulWidget {
 }
 
 class _SevenTabState extends State<SevenTab> {
-  String uidLogin, urlPathImage;
+  String uidLogin, urlPathImage, channelName;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseUser user;
 
   TextEditingController editingController = TextEditingController();
+  List<String> imgpath = List<String>();
 
   @override
   void initState() {
+    imgpath.clear();
     super.initState();
     initUser();
   }
@@ -28,6 +31,19 @@ class _SevenTabState extends State<SevenTab> {
   initUser() async {
     user = await _auth.currentUser();
     setState(() {});
+  }
+
+  getPhoto(String uid) async {
+    String imgPath;
+    await Firestore.instance
+        .collection('Avatar')
+        .document(uid)
+        .snapshots()
+        .listen((DocumentSnapshot documentSnapshot) {
+      imgPath = documentSnapshot.data['PathURL'];
+      print(imgPath);
+    });
+    return imgPath;
   }
 
   @override
@@ -94,7 +110,15 @@ class _SevenTabState extends State<SevenTab> {
                               elevation: 0,
                               child: InkWell(
                                   splashColor: Colors.black12,
-                                  onTap: () {},
+                                  onTap: () {
+                                    String uid = snapshot.data.documents
+                                        .elementAt(index)
+                                        .documentID;
+                                    Navigator.of(context).push(
+                                        CupertinoPageRoute(
+                                            builder: (BuildContext context) =>
+                                                OneTab(friendUid: uid)));
+                                  },
                                   child: Container(
                                       height: 140,
                                       width: 200,
@@ -114,11 +138,38 @@ class _SevenTabState extends State<SevenTab> {
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             4.0),
-                                                    child: Image.asset(
-                                                      'assets/default.png',
-                                                      fit: BoxFit.cover,
-                                                      width: 100.0,
-                                                    ),
+                                                    child: FutureBuilder<
+                                                            dynamic>(
+                                                        future: Firestore
+                                                            .instance
+                                                            .collection(
+                                                                'Avatar')
+                                                            .document(snapshot
+                                                                .data.documents
+                                                                .elementAt(
+                                                                    index)
+                                                                .documentID)
+                                                            .get(),
+                                                        builder: (BuildContext
+                                                                context,
+                                                            AsyncSnapshot<
+                                                                    dynamic>
+                                                                snapshot) {
+                                                          return snapshot
+                                                                      .data !=
+                                                                  null
+                                                              ? Image.network(
+                                                                  snapshot.data[
+                                                                      'PathURL'],
+                                                                  fit: BoxFit
+                                                                      .cover)
+                                                              : Image.asset(
+                                                                  'assets/default.png',
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  width: 100,
+                                                                );
+                                                        }),
                                                   ),
                                                   SizedBox(
                                                     width: 20,

@@ -16,6 +16,8 @@ enum PageEnum {
 }
 
 class OneTab extends StatefulWidget {
+  final String friendUid;
+  OneTab({Key key, this.friendUid}) : super(key: key);
   @override
   _OneTabState createState() {
     return _OneTabState();
@@ -50,6 +52,7 @@ class _OneTabState extends State<OneTab> {
   void initState() {
     super.initState();
     findUID();
+
     initUser();
   }
 
@@ -64,11 +67,12 @@ class _OneTabState extends State<OneTab> {
   }
 
   Future<void> readAllDataUser() async {
+    String uid = widget.friendUid ?? uidLogin;
     Firestore firestore = Firestore.instance;
     print("uid is $uidLogin");
     CollectionReference collectionReference = firestore.collection('User');
     await collectionReference
-        .document(uidLogin)
+        .document(uid)
         .snapshots()
         .listen((DocumentSnapshot documentSnapshot) {
       print('document = ${documentSnapshot.data}');
@@ -91,10 +95,11 @@ class _OneTabState extends State<OneTab> {
 
   Future<void> findPathUrlImage() async {
     try {
+      String uid = widget.friendUid ?? uidLogin;
       Firestore firestore = Firestore.instance;
       CollectionReference collectionReference = firestore.collection('Avatar');
       await collectionReference
-          .document(uidLogin)
+          .document(uid)
           .snapshots()
           .listen((DocumentSnapshot documentSnapshot) {
         print('document = ${documentSnapshot.data}');
