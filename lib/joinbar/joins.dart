@@ -5,10 +5,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_ui_designs/log/model/memberModel.dart';
 
 class Joins extends StatefulWidget {
+  //////////////////////////////
+  //ตั้งให้มีการรับค่าสำหรับทีมที่ถูกเลือกมาแสดง
   final String teamID;
-
   Joins({Key key, @required this.teamID}) : super(key: key);
-
+  //////////////////////////////
   @override
   State<StatefulWidget> createState() {
     return _Joins();
@@ -22,8 +23,11 @@ void _dialogResult(MyDialogAction value) {
 }
 
 class _Joins extends State<Joins> {
-  String uidLogin;
+  //////////////////////////////
+  String uidLogin; //เก็บค่า userID
+  List<Member> requestList = List<Member>(); //เก็บค่า รายชื่อคนรีเควสขอเข้าทีม
 
+  //ค้นหาไอดีของผู้ใช่้งาน
   Future<void> findUID() async {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     await firebaseAuth.currentUser().then((object) {
@@ -31,37 +35,33 @@ class _Joins extends State<Joins> {
     });
   }
 
-  List<Member> requestList = List<Member>();
-  List<String> memberTeam = List<String>();
-
-  readAllDataUser(String uid) async {
+  //ดึงข้อมูลของผู้เล่นจาก UserID เพื่อเก็บลงในrequestList
+  getMemberUser(String uid) {
     Firestore firestore = Firestore.instance;
-
+    var result;
     CollectionReference collectionReference = firestore.collection('User');
-    await collectionReference
+    collectionReference
         .document(uid)
         .snapshots()
         .listen((DocumentSnapshot documentSnapshot) {
-      // print(documentSnapshot.data);
-
-      var result = documentSnapshot.data;
-
-      String name = result['profileName'];
-      String age = result['age'];
-      String position = result['position'];
-      String number = result['shirtNumber'];
-
-      Member member = Member(
-          uid: uid, name: name, age: age, position: position, no: number);
+      result = documentSnapshot.data;
+      //ดึงค่าของผู้เล่นจาก firestore ใน table User
 
       setState(() {
-        requestList.add(member);
+        requestList.add(Member(
+            uid: uid,
+            name: result['profileName'],
+            age: result['age'],
+            position: result['position'],
+            no: result['shirtNumber']));
       });
     });
   }
 
-  Future<void> getRequestList() async {
+  //ดึงข้อมูล userID ของผู้เล่นที่ทำการรีเควสมาเข้าทีม
+  getRequestList() {
     requestList.clear();
+
     CollectionReference collectionReference =
         Firestore.instance.collection('Team');
 
@@ -70,59 +70,42 @@ class _Joins extends State<Joins> {
         .snapshots()
         .listen((DocumentSnapshot documentSnapshot) {
       for (var i = 0; i < documentSnapshot.data['requestMember'].length; i++) {
-        readAllDataUser(documentSnapshot.data['requestMember'][i]);
+        //นำข้อมูลที่ได้ไปค้นหาข้อมูลเพิ่มเพื่อจัดเก็บเป็น object
+        getMemberUser(documentSnapshot.data['requestMember'][i]);
       }
     });
   }
 
-  removeRequestList(Member member) async {
-    List<String> requestTemp = List<String>();
-    setState(() {
-      requestList.remove(member);
-      requestList.forEach((Member OnValue) {
-        requestTemp.add(OnValue.uid);
-      });
+  //Functionทำการลบข้อมูลของ requestlist เมื่อทำการ ตกลง หรือ ปฏิเสธและ อัพเดตไปยังfirestore
+  removeRequestList(Member member) {
+    //สร้างตัวแปรชั่วคราวเพื่อเก็บค่าเป็น String สำหรับUserID
 
-      Firestore.instance
-          .collection('Team')
-          .document(widget.teamID)
-          .updateData({'requestMember': requestTemp});
+    var val = []; //blank list for add elements which you want to delete
+    val.add('${member.uid}');
+
+    Firestore.instance
+        .collection("Team")
+        .document(widget.teamID)
+        .updateData({"requestMember": FieldValue.arrayRemove(val)});
+
+    setState(() {
+      requestList.removeWhere((f) => f.uid == member.uid);
     });
   }
 
-  addNewMember(String uid) async {
-    print("is member 02 $memberTeam}");
-
-    await Firestore.instance
-        .collection('Team')
-        .document(widget.teamID)
-        .updateData({'MemberTeam': memberTeam});
-  }
-
-  listMemberTeam(String uid) {
+  //Functionเพิ่มข้อมูลคนที่ได้รับการเข้าร่วมลงใน firestore
+  addMemberTeam(String uid) {
+    //สร้างตัวแปรสำหรับเก็บค่า uid คนที่ได้รับการตอบรับ
     var list = List<String>();
     list.add(uid);
+
+    //บันทึกลงfirestore table Team variable MemberTeam
     Firestore.instance
         .collection('Team')
         .document(widget.teamID)
         .updateData({"MemberTeam": FieldValue.arrayUnion(list)});
-
-    // Firestore firestore = Firestore.instance;
-    // CollectionReference collectionReference = firestore.collection('Team');
-    // List<dynamic> list;
-
-    // memberTeam.clear();
-    // collectionReference
-    //     .document(widget.teamID)
-    //     .snapshots()
-    //     .listen((DocumentSnapshot documentSnapshot) {
-    //   list = List.from(documentSnapshot.data['MemberTeam']);
-    //   list.add(uid);
-    // });
-    // await collectionReference
-    //     .document(widget.teamID)
-    //     .updateData({"MemberTeam": FieldValue.arrayUnion(list)});
   }
+  //////////////////////////////
 
   AlertDialog dialog = AlertDialog(
     content:
@@ -170,19 +153,22 @@ class _Joins extends State<Joins> {
 
   @override
   void initState() {
-    requestList.clear();
-    memberTeam.clear();
-
-    getRequestList();
+    //////////////////////////////
+    requestList.clear(); //clear request ก่อนเพื่อไม่ให้มีค่าตกค้าง
+    getRequestList(); //ดึงค่ารีเควสใหม่
+    //////////////////////////////
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     MediaQueryData queryData = MediaQuery.of(context);
+    //////////////////////////////
+    //ประกาศตัวแปรสำหรับเก็บค่าขนาดหน้าจอของอุปกรณ์ที่กำลังใช้งานอยู่
     double screenWidth = queryData.size.width;
     double screenHeight = queryData.size.height;
 
+    //สร้างWidgetแยกสำหรับแสดงรายชือคนที่ขอrequestเข้ามา
     Widget requestListResult() {
       return ListView.builder(
           itemCount: requestList.length,
@@ -223,8 +209,10 @@ class _Joins extends State<Joins> {
                                               child: Text('ok'),
                                               onPressed: () {
                                                 Navigator.pop(context);
+                                                //ลบข้อมูลจากrequestList
                                                 removeRequestList(item);
-                                                listMemberTeam(item.uid);
+                                                //เพิ่มข้อมูลไปยังmemberList
+                                                addMemberTeam(item.uid);
                                               })
                                         ]));
                           }),
@@ -245,6 +233,7 @@ class _Joins extends State<Joins> {
                                               child: Text('yes'),
                                               onPressed: () {
                                                 Navigator.pop(context);
+                                                //ลบข้อมูลจากrequestList
                                                 removeRequestList(item);
                                               }),
                                           CupertinoDialogAction(

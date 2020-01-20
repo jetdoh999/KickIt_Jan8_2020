@@ -16,7 +16,6 @@ class CreateTeam extends StatefulWidget {
 }
 
 class _CreateTeamState extends State<CreateTeam> {
-  
   // Field
   File file;
   final formkey = GlobalKey<FormState>();
@@ -65,6 +64,7 @@ class _CreateTeamState extends State<CreateTeam> {
     map['NameTeam'] = nameTeam;
     map['UrlTeam'] = urlTeam;
     map['MemberTeam'] = memberList;
+    map['requestMember'] = [];
 
     print('uidLogin = $uidLogin');
 

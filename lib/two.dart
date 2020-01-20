@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_ui_designs/log/model/memberModel.dart';
 import 'package:flutter_ui_designs/teamstats.dart';
 import 'package:flutter_ui_designs/calendar.dart';
 import 'package:flutter_ui_designs/scaffold/create_team.dart';
@@ -10,7 +9,6 @@ import 'package:like_button/like_button.dart';
 import 'package:flutter_ui_designs/join.dart';
 import 'package:flutter_ui_designs/crud/presentation/pages/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'teampage/pages/team_member_pages.dart';
 
 enum PageEnum {
@@ -56,51 +54,26 @@ class _TwoTabState extends State<TwoTab> {
   }
 
   void routeToCreateTeam() {
-    MaterialPageRoute materialPageRoute =
-        MaterialPageRoute(builder: (BuildContext buildContext) {
-      return CreateTeam();
-    });
-    Navigator.of(context).push(materialPageRoute);
+    if (channelName != uid) {
+      MaterialPageRoute materialPageRoute =
+          MaterialPageRoute(builder: (BuildContext buildContext) {
+        return CreateTeam();
+      });
+      Navigator.of(context).push(materialPageRoute);
+    }
   }
 
   //////////////////////////////
   /////Functionสำหรับใบผู้ใช้งานกดขอเข้าร่วมทีม
-  requestToJoinTeam(String uid) async {
+  requestToJoinTeam(String uid) {
+    var val = []; //blank list for add elements which you want to delete
+    val.add(uid);
+
     Firestore firestore = Firestore.instance;
 
     CollectionReference collectionReference = firestore.collection('Team');
-    await collectionReference
-        .document(channelName)
-        .snapshots()
-        .listen((DocumentSnapshot documentSnapshot) {
-      //ดึงข้อมูลเพื่อตรวจสอบว่ามีVariable requestMember สำหรับเก็บคนขอเข้าทีมหรือยัง
-      if (documentSnapshot.data['requestMember'] == null) {
-        //กรณียังไม่มี
-        print("null naja");
-        List<String> newRequest = List<String>();
-        newRequest.add(uid);
-        Firestore.instance.collection('Team').document(channelName).updateData({
-          'requestMember': newRequest
-        }); //เพิ่มลิสท์สำหรับคนขอเข้าร่วมทีมเข้าไปในFirebase firestore
-      } else if (documentSnapshot.data['requestMember'] != null) {
-        //กรณีเคยมีการขอเข้าร่วมมาก่อนแล้ว
-        //ดึงข้อมูลจาก firestore มาเก็บในตัวแปร
-        var result = documentSnapshot.data['requestMember'];
-
-        //ตรวจสอบว่าเคยขอไว้แล้วหรือยัง
-        if (result.contains(uid) == true) {
-          print("duplicate");
-        } else {
-          //ถ้ายังจะทำการเพิ่มเข้าไป โดยเก็บเป็น array userID
-          List<String> uidList = List<String>.from(result);
-
-          uidList.add(uid);
-          Firestore.instance
-              .collection('Team')
-              .document(channelName)
-              .updateData({'requestMember': uidList});
-        }
-      }
+    collectionReference.document(channelName).updateData({
+      'requestMember': FieldValue.arrayUnion(val),
     });
   }
 

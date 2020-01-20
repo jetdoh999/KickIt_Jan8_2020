@@ -4,9 +4,11 @@ import 'package:flutter_ui_designs/log/model/memberModel.dart';
 import 'package:flutter_ui_designs/one.dart';
 
 class TeamMembersPage extends StatefulWidget {
+  //////////////////////////////
+  //ตั้งให้มีการรับค่าสำหรับทีมที่ถูกเลือกมาแสดง
   final String teamID;
-
   TeamMembersPage({Key key, @required this.teamID}) : super(key: key);
+  //////////////////////////////
   _TeamMembersPage createState() {
     return _TeamMembersPage();
   }
@@ -35,26 +37,27 @@ class _TeamMembersPage extends State<TeamMembersPage> {
 
   addMember(String uid) async {
     Firestore firestore = Firestore.instance;
-
+    memberList.clear();
     CollectionReference collectionReference = firestore.collection('User');
     await collectionReference
         .document(uid)
         .snapshots()
         .listen((DocumentSnapshot documentSnapshot) {
-      var result = documentSnapshot.data;
+      var result;
 
-      String name = result['profileName'];
-      String age = result['age'];
-      String position = result['position'];
-      String number = result['shirtNumber'];
-
-      Member member = Member(
-          uid: uid, name: name, age: age, position: position, no: number);
+      result = documentSnapshot.data;
 
       setState(() {
-        memberList.add(member);
+        memberList.add(Member(
+            uid: uid,
+            name: result['profileName'],
+            age: result['age'],
+            position: result['position'],
+            no: result['shirtNumber']));
+        memberList.toSet().toList();
       });
     });
+
     print("final length ${memberList.length}");
   }
 
